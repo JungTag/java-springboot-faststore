@@ -66,6 +66,18 @@ public class BookSaleServiceTest {
     @Test
     @Transactional
     public void registerBookSale() {
+        Book book = new Book("자바의 정석", "남궁성", 30000L);
+        bookRepository.save(book);
+
+        bookSaleService.registerBookSale("자바의 정석", DiscountType.PERCENT, 10L);
+        BookSale result = bookSaleService.getOrThrow(book);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getBook().getTitle()).isEqualTo(book.getTitle());
+        assertThat(result.getBook().getAuthor()).isEqualTo(book.getAuthor());
+        assertThat(result.getBook().getPrice()).isEqualTo(book.getPrice());
+        assertThat(result.getDiscountPolicy().getDiscountType()).isEqualTo(DiscountType.PERCENT);
+        assertThat(result.getDiscountPolicy().getAmount()).isEqualTo(10L);
     }
 
 }
