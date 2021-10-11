@@ -20,5 +20,12 @@ public class BookService {
     // TODO: 동일한 책의 제목이 존재하면 RunTimeException을 발생시키고, 그렇지 않으면 책을 저장하도록 구현하세요. 제목으로 책을 조회해오는 쿼리는 이미 BookRepository에 등록되어있습니다.
     @Transactional
     public void registerBook(String title, String author, Long price) {
+        bookRepository.findByTitle(title)
+                .ifPresent(book -> {
+                    throw new RuntimeException("이미 동일한 제목의 책이 존재합니다.");
+                });
+
+        Book book = new Book(title, author, price);
+        bookRepository.save(book);
     }
 }
