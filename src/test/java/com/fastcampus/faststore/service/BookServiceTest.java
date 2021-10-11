@@ -47,13 +47,29 @@ public class BookServiceTest {
         assertThat(result.getPrice()).isEqualTo(book.getPrice());
 
         assertThatThrownBy(() -> bookService.getOrThrow("데이타베이스 시스템"))
-                .isInstanceOf(RuntimeException.class);
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("해당 제목의 책이 존재하지 않습니다.");
     }
 
     @Test
     public void registerBook() {
-        bookService.registerBook("자바의 정석", "남궁성", 3000L);
+        Book book = new Book("자바의 정석", "남궁성", 30000L);
 
-        assertThat(bookRepository.findByTitle("자바의 정석")).isNotNull();
+        bookService.registerBook(
+                book.getTitle(),
+                book.getAuthor(),
+                book.getPrice()
+        );
+
+        Book result = bookService.getOrThrow("자바의 정석");
+
+        assertThat(result).isNotNull();
+        assertThat(result.getTitle()).isEqualTo(book.getTitle());
+        assertThat(result.getAuthor()).isEqualTo(book.getAuthor());
+        assertThat(result.getPrice()).isEqualTo(book.getPrice());
+
+        assertThatThrownBy(() -> bookService.registerBook("자바의 정석", "남궁성", 3000L))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("이미 동일한 제목의 책이 존재합니다.");
     }
 }
