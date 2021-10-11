@@ -25,6 +25,24 @@ public class DiscountPolicy extends BaseEntity {
 
     // TODO: discountType에 따라 price에서 차액을 빼거나, 퍼센트 할인 가격을 반환하는 메서드를 완성하시오. DiscountPolicyTest를 성공시켜야 합니다.
     public Long getDiscountAmount(Long price) {
-        return 0L;
+        Long discountedPrice = price;
+
+        if (discountType == DiscountType.AMOUNT) {
+            discountedPrice = discountByAmount(price, amount);
+        }
+        if (discountType == DiscountType.PERCENT) {
+            discountedPrice = discountByPercent(price, amount);
+        }
+
+        return discountedPrice;
+    }
+
+    private Long discountByAmount(Long price, Long amount) {
+        return price - amount;
+    }
+
+    private Long discountByPercent(Long price, Long amount) {
+        double percentage = ((double) (100-amount)) / 100;
+        return Math.round(price * percentage);
     }
 }
